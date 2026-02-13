@@ -172,7 +172,7 @@
             document.getElementById('keterangan').innerText = data.x_09 || 'Tidak ada catatan tambahan.';
             document.getElementById('token-footer').innerText = 'ID: ' + data.x_10;
 
-            const verificationUrl = `https://lidan.co.id/sign/surat_penawaran?token=${data.x_10}`;
+            const verificationUrl = `https://sign.lidan.co.id/surat_penawaran?token=${data.x_10}`;
             
             new QRCode(document.getElementById("qrcode"), {
                 text: verificationUrl,
