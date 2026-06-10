@@ -291,6 +291,23 @@ body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); colo
   white-space: nowrap;
 }
 .btn-detail:hover { background: var(--bg); border-color: var(--navy); }
+.btn-del {
+  background: none; border: 1.5px solid #fecaca;
+  border-radius: 7px; padding: 5px 10px;
+  font-size: 12px; font-weight: 700; font-family: inherit;
+  color: var(--red); cursor: pointer;
+  transition: background 0.12s, border-color 0.12s;
+  white-space: nowrap;
+}
+.btn-del:hover { background: #fee2e2; border-color: var(--red); }
+.btn-del-modal {
+  width: 100%; background: #fee2e2; color: var(--red);
+  border: none; border-radius: 9px; padding: 11px;
+  font-size: 13px; font-weight: 700; font-family: inherit;
+  cursor: pointer; margin-top: 8px;
+  transition: background 0.15s;
+}
+.btn-del-modal:hover { background: #fecaca; }
 
 .empty-state {
   padding: 48px 20px;
@@ -763,7 +780,10 @@ function renderTable() {
       <td class="hide-mobile">${d.x_09||'—'}</td>
       <td class="hide-mobile">${biaya}</td>
       <td>${statusBadge}</td>
-      <td><button class="btn-detail" onclick="openDetail(${d.id_x})">Detail</button></td>
+      <td style="white-space:nowrap;display:flex;gap:6px;flex-wrap:wrap;">
+        <button class="btn-detail" onclick="openDetail(${d.id_x})">Detail</button>
+        <button class="btn-del" onclick="deleteRecord(${d.id_x}, '${esc(d.x_02||'')}')" title="Hapus">🗑</button>
+      </td>
     </tr>`;
   }).join('');
 
@@ -858,6 +878,7 @@ function openDetail(id) {
         <textarea id="catatanAdmin" placeholder="Catatan balasan untuk pemohon (opsional)...">${d.x_15||''}</textarea>
       </div>
       <button class="btn-save-status" id="btnSave" onclick="saveStatus()">Simpan Keputusan</button>
+      <button class="btn-del-modal" onclick="deleteRecord(currentRecord.id_x, currentRecord.x_02, true)">🗑 Hapus Pengajuan Ini</button>
     </div>
   `;
 
@@ -913,6 +934,28 @@ function closeModal() {
 document.getElementById('modalOverlay').addEventListener('click', function(e) {
   if (e.target === this) closeModal();
 });
+
+async function deleteRecord(id, nama, fromModal = false) {
+  if (!confirm(`Hapus pengajuan dari "${nama}"?\n\nData yang dihapus tidak bisa dikembalikan.`)) return;
+  try {
+    const res  = await fetch(`${API}?table=${TABLE}&id_x=${id}`, {
+      method: 'DELETE',
+      headers: { 'X-Custom-Auth': AUTH }
+    });
+    const data = await res.json();
+    if (data.success) {
+      allData = allData.filter(d => d.id_x !== id);
+      updateStats();
+      renderTable();
+      if (fromModal) closeModal();
+      showToast('Pengajuan berhasil dihapus', 'success');
+    } else {
+      showToast('Gagal menghapus data', 'error');
+    }
+  } catch(e) {
+    showToast('Error: ' + e.message, 'error');
+  }
+}
 
 // ── SIDEBAR MOBILE ──
 function openSidebar() {
