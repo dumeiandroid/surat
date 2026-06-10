@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EduCompass Program — Pengajuan Kampus</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Lora:ital,wght@0,400;0,600;1,400&display=swap');
+
+  :root {
+    --navy:    #1a2744;
+    --navy2:   #243258;
+    --indigo:  #4361b8;
+    --indigo2: #3451a0;
+    --cream:   #f7f8fc;
+    --amber:   #e9a23b;
+    --text:    #1a2744;
+    --muted:   #6b7a99;
+    --border:  #dce3f0;
+    --red:     #e05252;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background: var(--cream);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  .site-header {
+    background: var(--navy);
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    height: 64px;
+  }
+  .logo-mark {
+    width: 36px; height: 36px;
+    background: var(--indigo);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Lora', serif;
+    font-weight: 600;
+    color: #fff;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+  .site-header h1 {
+    font-size: 15px;
+    font-weight: 700;
+    color: #fff;
+  }
+  .site-header span {
+    font-size: 12px;
+    color: rgba(255,255,255,0.45);
+    font-weight: 400;
+    margin-left: 2px;
+  }
+
+  .hero {
+    background: linear-gradient(135deg, #1a2744 0%, #1e2f5e 55%, #253470 100%);
+    padding: 48px 24px 56px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -50px; right: -50px;
+    width: 220px; height: 220px;
+    border-radius: 50%;
+    background: rgba(67,97,184,0.14);
+  }
+  .hero::after {
+    content: '';
+    position: absolute;
+    bottom: -70px; left: -30px;
+    width: 190px; height: 190px;
+    border-radius: 50%;
+    background: rgba(233,162,59,0.09);
+  }
+  .hero-badge {
+    display: inline-block;
+    background: rgba(67,97,184,0.2);
+    border: 1px solid rgba(67,97,184,0.45);
+    color: #9ab3f5;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    padding: 5px 14px;
+    border-radius: 999px;
+    margin-bottom: 18px;
+  }
+  .hero h2 {
+    font-family: 'Lora', serif;
+    font-size: clamp(22px, 5vw, 32px);
+    font-weight: 600;
+    color: #fff;
+    line-height: 1.3;
+    margin-bottom: 10px;
+    position: relative;
+  }
+  .hero p {
+    font-size: 14px;
+    color: rgba(255,255,255,0.6);
+    max-width: 500px;
+    margin: 0 auto;
+    line-height: 1.65;
+    position: relative;
+  }
+  .hero-note {
+    margin-top: 20px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(233,162,59,0.15);
+    border: 1px solid rgba(233,162,59,0.3);
+    border-radius: 10px;
+    padding: 10px 16px;
+    font-size: 12.5px;
+    color: #f0c96b;
+    position: relative;
+  }
+
+  .form-wrap {
+    max-width: 680px;
+    margin: -20px auto 0;
+    padding: 0 16px 60px;
+    position: relative;
+    z-index: 2;
+  }
+
+  .card {
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 4px 24px rgba(26,39,68,0.08);
+    overflow: hidden;
+    margin-bottom: 16px;
+  }
+  .card-head {
+    padding: 18px 24px 14px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .card-icon {
+    width: 32px; height: 32px;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 15px;
+    flex-shrink: 0;
+  }
+  .card-head h3 {
+    font-size: 13.5px;
+    font-weight: 700;
+    color: var(--navy);
+  }
+  .card-body { padding: 20px 24px 24px; }
+
+  .field-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+  .field-grid .full { grid-column: 1 / -1; }
+
+  .field { display: flex; flex-direction: column; gap: 5px; }
+  .field label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--muted);
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+  }
+  .field label .req { color: var(--red); margin-left: 2px; }
+  .field input,
+  .field select,
+  .field textarea {
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 14px;
+    font-family: inherit;
+    color: var(--text);
+    background: #fff;
+    transition: border-color 0.15s, box-shadow 0.15s;
+    outline: none;
+    width: 100%;
+  }
+  .field input:focus,
+  .field select:focus,
+  .field textarea:focus {
+    border-color: var(--indigo);
+    box-shadow: 0 0 0 3px rgba(67,97,184,0.12);
+  }
+  .field input.error,
+  .field select.error,
+  .field textarea.error { border-color: var(--red); }
+  .field textarea { resize: vertical; min-height: 90px; }
+  .field-hint { font-size: 11.5px; color: var(--muted); margin-top: 2px; }
+  .field .err-msg { font-size: 11.5px; color: var(--red); display: none; }
+  .field.has-error .err-msg { display: block; }
+
+  /* MITRA INFO BOX */
+  .mitra-box {
+    background: linear-gradient(135deg, #f0f3ff 0%, #e8ecfb 100%);
+    border: 1.5px solid #c5cef5;
+    border-radius: 12px;
+    padding: 14px 16px;
+    margin-bottom: 14px;
+    font-size: 12.5px;
+    color: #3451a0;
+    line-height: 1.55;
+  }
+  .mitra-box strong { display: block; font-size: 12px; text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 4px; color: var(--indigo2); }
+
+  /* BIAYA BLOCK */
+  .biaya-block {
+    background: linear-gradient(135deg, #f0f3ff 0%, #e8ecfb 100%);
+    border: 1.5px solid #c5cef5;
+    border-radius: 12px;
+    padding: 16px 18px;
+  }
+  .biaya-block .biaya-label {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--indigo2);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 6px;
+  }
+  .biaya-ref {
+    font-size: 12.5px;
+    color: #3451a0;
+    margin-bottom: 12px;
+    line-height: 1.5;
+  }
+  .biaya-ref strong { color: var(--indigo2); }
+  .input-prefix-wrap {
+    display: flex;
+    align-items: center;
+    border: 1.5px solid #c5cef5;
+    border-radius: 8px;
+    background: #fff;
+    overflow: hidden;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  .input-prefix-wrap:focus-within {
+    border-color: var(--indigo);
+    box-shadow: 0 0 0 3px rgba(67,97,184,0.12);
+  }
+  .input-prefix {
+    background: #d5dcf8;
+    padding: 10px 12px;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--indigo2);
+    white-space: nowrap;
+    border-right: 1.5px solid #c5cef5;
+  }
+  .input-prefix-wrap input {
+    border: none !important;
+    box-shadow: none !important;
+    flex: 1;
+    padding: 10px 12px;
+    font-size: 14px;
+    font-family: inherit;
+    color: var(--text);
+    outline: none;
+    background: transparent;
+  }
+
+  .tanggal-note {
+    font-size: 12px;
+    color: var(--muted);
+    background: #f5f7fc;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 12px;
+    margin-top: 10px;
+    line-height: 1.5;
+  }
+  .tanggal-note strong { color: var(--navy); }
+
+  .submit-wrap { padding: 0 0 4px; }
+  .btn-submit {
+    width: 100%;
+    background: var(--indigo);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    padding: 14px 20px;
+    font-size: 15px;
+    font-weight: 700;
+    font-family: inherit;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.1s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  .btn-submit:hover { background: var(--indigo2); }
+  .btn-submit:active { transform: scale(0.99); }
+  .btn-submit:disabled { background: #9aaad8; cursor: not-allowed; transform: none; }
+  .submit-note {
+    text-align: center;
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 10px;
+    line-height: 1.5;
+  }
+
+  .overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(26,39,68,0.55);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .overlay.show { display: flex; }
+  .popup {
+    background: #fff;
+    border-radius: 20px;
+    padding: 36px 32px;
+    max-width: 380px;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0 20px 60px rgba(26,39,68,0.2);
+    animation: popIn 0.25s ease;
+  }
+  @keyframes popIn {
+    from { transform: scale(0.92); opacity: 0; }
+    to   { transform: scale(1);    opacity: 1; }
+  }
+  .popup-icon {
+    width: 64px; height: 64px;
+    background: #eef1fc;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 18px;
+    font-size: 30px;
+  }
+  .popup h3 { font-size: 18px; font-weight: 800; color: var(--navy); margin-bottom: 8px; }
+  .popup p { font-size: 13.5px; color: var(--muted); line-height: 1.6; margin-bottom: 22px; }
+  .popup-ref {
+    background: #f5f7fc;
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 22px;
+  }
+  .popup-ref strong { color: var(--navy); font-size: 13px; }
+  .btn-close {
+    background: var(--indigo);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    padding: 12px 32px;
+    font-size: 14px;
+    font-weight: 700;
+    font-family: inherit;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .btn-close:hover { background: var(--indigo2); }
+
+  @media (max-width: 520px) {
+    .field-grid { grid-template-columns: 1fr; }
+    .field-grid .full { grid-column: 1; }
+    .card-body { padding: 16px; }
+    .hero { padding: 36px 16px 48px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="logo-mark">E</div>
+  <div>
+    <h1>EduCompass Program <span>· Lidan Psikologi</span></h1>
+  </div>
+</header>
+
+<div class="hero">
+  <div class="hero-badge">Program Pengabdian Masyarakat</div>
+  <h2>Pemetaan Potensi Mahasiswa<br>untuk Perguruan Tinggi</h2>
+  <p>Kenali kekuatan, temukan kelemahan, dan dapatkan rekomendasi pengembangan tepat sasaran — data juga menjadi referensi bagi perusahaan mitra dalam menemukan kandidat terbaik.</p>
+  <div class="hero-note">
+    ⏱ Pengajuan diproses dalam 1×24 jam
+  </div>
+</div>
+
+<div class="form-wrap">
+  <form id="mainForm" novalidate>
+
+    <!-- IDENTITAS KAMPUS -->
+    <div class="card">
+      <div class="card-head">
+        <div class="card-icon" style="background:#eef1fc;">🎓</div>
+        <h3>Identitas Perguruan Tinggi</h3>
+      </div>
+      <div class="card-body">
+        <div class="field-grid">
+          <div class="field full">
+            <label>Nama Institusi <span class="req">*</span></label>
+            <input type="text" id="nama_institusi" placeholder="contoh: Universitas Sumatera Utara" />
+            <span class="err-msg">Nama institusi wajib diisi</span>
+          </div>
+          <div class="field">
+            <label>Jenis Institusi <span class="req">*</span></label>
+            <select id="jenis_kampus">
+              <option value="">— Pilih —</option>
+              <option value="Universitas">Universitas</option>
+              <option value="Institut">Institut</option>
+              <option value="Sekolah Tinggi">Sekolah Tinggi</option>
+              <option value="Politeknik">Politeknik</option>
+              <option value="Akademi">Akademi</option>
+            </select>
+            <span class="err-msg">Jenis institusi wajib dipilih</span>
+          </div>
+          <div class="field">
+            <label>Fakultas / Prodi</label>
+            <input type="text" id="fakultas" placeholder="contoh: Fakultas Psikologi" />
+          </div>
+          <div class="field full">
+            <label>Alamat Lengkap <span class="req">*</span></label>
+            <input type="text" id="alamat" placeholder="Jl., Kelurahan, Kecamatan" />
+            <span class="err-msg">Alamat wajib diisi</span>
+          </div>
+          <div class="field">
+            <label>Kota / Kabupaten <span class="req">*</span></label>
+            <input type="text" id="kota" placeholder="contoh: Medan" />
+            <span class="err-msg">Kota wajib diisi</span>
+          </div>
+          <div class="field">
+            <label>Provinsi <span class="req">*</span></label>
+            <input type="text" id="provinsi" placeholder="contoh: Sumatera Utara" />
+            <span class="err-msg">Provinsi wajib diisi</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PENANGGUNG JAWAB -->
+    <div class="card">
+      <div class="card-head">
+        <div class="card-icon" style="background:#fff7ed;">👤</div>
+        <h3>Penanggung Jawab (PIC)</h3>
+      </div>
+      <div class="card-body">
+        <div class="field-grid">
+          <div class="field full">
+            <label>Nama Lengkap <span class="req">*</span></label>
+            <input type="text" id="nama_pic" placeholder="Nama PIC yang dapat dihubungi" />
+            <span class="err-msg">Nama PIC wajib diisi</span>
+          </div>
+          <div class="field">
+            <label>Jabatan <span class="req">*</span></label>
+            <input type="text" id="jabatan_pic" placeholder="contoh: Kaprodi / Wakil Dekan" />
+            <span class="err-msg">Jabatan wajib diisi</span>
+          </div>
+          <div class="field">
+            <label>No. WhatsApp <span class="req">*</span></label>
+            <input type="tel" id="wa_pic" placeholder="08xxxxxxxxxx" />
+            <span class="err-msg">No. WhatsApp wajib diisi</span>
+          </div>
+          <div class="field full">
+            <label>Email <span class="req">*</span></label>
+            <input type="email" id="email_pic" placeholder="email@kampus.ac.id" />
+            <span class="err-msg">Email wajib diisi dengan format yang benar</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DETAIL PROGRAM -->
+    <div class="card">
+      <div class="card-head">
+        <div class="card-icon" style="background:#f0f3ff;">📋</div>
+        <h3>Detail Program</h3>
+      </div>
+      <div class="card-body">
+        <div class="mitra-box">
+          <strong>🤝 Tentang Data Mitra Perusahaan</strong>
+          Data hasil pemetaan mahasiswa juga akan digunakan sebagai referensi bagi perusahaan mitra Lidan Psikologi dalam menemukan kandidat terbaik. Mahasiswa yang berminat dapat mengaktifkan fitur ini secara individual saat proses tes berlangsung.
+        </div>
+        <div class="field-grid">
+          <div class="field">
+            <label>Jumlah Mahasiswa <span class="req">*</span></label>
+            <input type="number" id="jml_siswa" placeholder="contoh: 200" min="1" />
+            <span class="err-msg">Jumlah mahasiswa wajib diisi</span>
+          </div>
+          <div class="field">
+            <label>Rencana Pelaksanaan <span class="req">*</span></label>
+            <input type="date" id="tgl_rencana" />
+            <span class="err-msg">Tanggal rencana wajib dipilih</span>
+          </div>
+          <div class="field full">
+            <div class="biaya-block">
+              <div class="biaya-label">Biaya yang Diusulkan (per mahasiswa)</div>
+              <div class="biaya-ref">Biaya normal program ini adalah <strong>Rp 350.000/mahasiswa</strong>. Isi dengan nominal yang menurut institusi tidak memberatkan.</div>
+              <div class="input-prefix-wrap">
+                <div class="input-prefix">Rp</div>
+                <input type="number" id="biaya" placeholder="contoh: 150000" min="0" />
+              </div>
+              <span class="err-msg" id="err-biaya" style="display:none;color:var(--red);font-size:11.5px;margin-top:4px;"></span>
+            </div>
+          </div>
+          <div class="field full">
+            <label>Alasan / Catatan Pengajuan</label>
+            <textarea id="catatan" placeholder="Ceritakan kondisi institusi, latar belakang pengajuan, atau informasi lain yang perlu diketahui tim kami..."></textarea>
+            <div class="field-hint">Opsional, namun akan membantu proses pertimbangan.</div>
+          </div>
+        </div>
+        <div class="tanggal-note">
+          📅 <strong>Catatan:</strong> Tanggal pelaksanaan di atas adalah usulan dari institusi. Tanggal final akan disepakati bersama setelah pengajuan disetujui.
+        </div>
+      </div>
+    </div>
+
+    <!-- SUBMIT -->
+    <div class="submit-wrap">
+      <button type="submit" class="btn-submit" id="btnSubmit">
+        <span id="btnText">Kirim Pengajuan</span>
+      </button>
+      <p class="submit-note">Dengan mengirim formulir ini, Anda menyetujui bahwa data yang diisi adalah benar.<br>Hasil keputusan akan disampaikan maks. <strong>1×24 jam</strong>.</p>
+    </div>
+
+  </form>
+</div>
+
+<!-- POPUP SUKSES -->
+<div class="overlay" id="overlay">
+  <div class="popup">
+    <div class="popup-icon">✅</div>
+    <h3>Pengajuan Terkirim!</h3>
+    <p>Terima kasih. Pengajuan EduCompass Program dari institusi Anda telah kami terima dan akan segera diproses oleh tim kami.</p>
+    <div class="popup-ref">
+      Keputusan akan disampaikan melalui WhatsApp / email yang Anda daftarkan paling lambat <strong>1×24 jam</strong>.
+    </div>
+    <button class="btn-close" onclick="closePopup()">Tutup</button>
+  </div>
+</div>
+
+<script>
+const API_URL  = 'https://lidan-co-id.pages.dev/api/contacts_filter_dinamis6';
+const TABLE    = 'pengabdian';
+const AUTH_KEY = 'admin';
+
+function v(id) { return document.getElementById(id); }
+
+function setError(id, show) {
+  const el = v(id);
+  if (!el) return;
+  const wrap = el.closest('.field');
+  if (!wrap) return;
+  if (show) { el.classList.add('error'); wrap.classList.add('has-error'); }
+  else       { el.classList.remove('error'); wrap.classList.remove('has-error'); }
+}
+
+function validateEmail(e) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e); }
+
+function validate() {
+  let ok = true;
+  const required = [
+    'nama_institusi','jenis_kampus','alamat','kota','provinsi',
+    'nama_pic','jabatan_pic','wa_pic','email_pic','jml_siswa','tgl_rencana'
+  ];
+  required.forEach(id => {
+    const val = v(id) ? v(id).value.trim() : '';
+    const empty = val === '';
+    setError(id, empty);
+    if (empty) ok = false;
+  });
+  if (v('email_pic') && v('email_pic').value.trim() && !validateEmail(v('email_pic').value.trim())) {
+    setError('email_pic', true); ok = false;
+  }
+  const biayaEl = v('biaya');
+  const errBiaya = v('err-biaya');
+  if (!biayaEl.value.trim()) {
+    biayaEl.style.borderColor = 'var(--red)';
+    errBiaya.textContent = 'Biaya yang diusulkan wajib diisi';
+    errBiaya.style.display = 'block';
+    ok = false;
+  } else {
+    biayaEl.style.borderColor = '';
+    errBiaya.style.display = 'none';
+  }
+  return ok;
+}
+
+v('mainForm').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  if (!validate()) return;
+
+  const btn = v('btnSubmit');
+  const btnText = v('btnText');
+  btn.disabled = true;
+  btnText.textContent = 'Mengirim...';
+
+  const dataExtra = JSON.stringify({
+    jenis_kampus: v('jenis_kampus').value,
+    fakultas: v('fakultas').value.trim(),
+    provinsi: v('provinsi').value.trim()
+  });
+
+  const payload = {
+    x_01: 'kampus',
+    x_02: v('nama_institusi').value.trim(),
+    x_03: v('alamat').value.trim(),
+    x_04: v('kota').value.trim(),
+    x_05: v('nama_pic').value.trim(),
+    x_06: v('jabatan_pic').value.trim(),
+    x_07: v('wa_pic').value.trim(),
+    x_08: v('email_pic').value.trim(),
+    x_09: parseInt(v('jml_siswa').value) || 0,
+    x_10: parseInt(v('biaya').value) || 0,
+    x_11: v('tgl_rencana').value,
+    x_12: v('catatan').value.trim(),
+    x_13: 'pending',
+    x_16: new Date().toISOString(),
+    x_17: dataExtra
+  };
+
+  try {
+    const res = await fetch(`${API_URL}?table=${TABLE}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Custom-Auth': AUTH_KEY
+      },
+      body: JSON.stringify(payload)
+    });
+    const data = await res.json();
+    if (data.success) {
+      v('overlay').classList.add('show');
+      v('mainForm').reset();
+    } else {
+      alert('Terjadi kesalahan saat mengirim. Silakan coba lagi.');
+    }
+  } catch (err) {
+    alert('Gagal terhubung ke server. Periksa koneksi internet Anda.');
+  } finally {
+    btn.disabled = false;
+    btnText.textContent = 'Kirim Pengajuan';
+  }
+});
+
+function closePopup() { v('overlay').classList.remove('show'); }
+v('overlay').addEventListener('click', function(e) {
+  if (e.target === this) closePopup();
+});
+</script>
+</body>
+</html>
